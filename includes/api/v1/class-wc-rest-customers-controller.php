@@ -404,8 +404,11 @@ class WC_REST_Customers_V1_Controller extends WC_REST_Controller {
 				throw new WC_REST_Exception( 'woocommerce_rest_invalid_id', __( 'Invalid resource ID.', 'woocommerce' ), 400 );
 			}
 
-			if ( ! empty( $request['email'] ) && email_exists( $request['email'] ) && $request['email'] !== $customer->get_email() ) {
-				throw new WC_REST_Exception( 'woocommerce_rest_customer_invalid_email', __( 'Email address is invalid.', 'woocommerce' ), 400 );
+			if ( ! empty( $request['email'] ) && $request['email'] !== $customer->get_email() ) {
+				$other_customer_id = email_exists( $request['email'] );
+				if ( $other_customer_id && $other_customer_id != $id ) {
+					throw new WC_REST_Exception( 'woocommerce_rest_customer_invalid_email', __( 'Email address is invalid.', 'woocommerce' ), 400 );
+				}
 			}
 
 			if ( ! empty( $request['username'] ) && $request['username'] !== $customer->get_username() ) {
